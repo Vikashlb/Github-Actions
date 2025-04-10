@@ -1,0 +1,53 @@
+name: Code formatting using Spotless Plugin
+
+on:
+  push:
+    branches: [master]
+
+  pull_request:
+    branches: [master]
+
+  workflow_dispatch:
+
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 23
+        uses: actions/setup-java@v4
+        with:
+          java-version: '23'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Git Config
+        working-directory: student
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "$github-actions[bot]@users.noreply.github.com"
+
+      - name : Apply Formatting
+        working-directory: student
+        run: |
+          mvn spotless:apply
+
+      - name : Stage Changes
+        working-directory: student
+        run: |
+          git add .
+          git status
+
+      - name: Commit Changes
+        working-directory: student
+        run: |
+          git commit -m "Auto-formatted code!" || echo "No changes to commit!!"
+
+      - name: Push Changes
+        working-directory: student
+        run : |
+          git push

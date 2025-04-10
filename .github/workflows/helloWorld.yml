@@ -1,0 +1,15 @@
+name: HelloWorldAction
+
+on: 
+  workflow_dispatch:
+
+jobs:
+  helloWorld:
+    name: printHelloWorld
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{matrix.os}}
+    steps:
+      - name: print_hello_world
+        run: echo "Hello World!"
